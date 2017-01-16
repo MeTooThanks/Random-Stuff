@@ -23,11 +23,48 @@ public class DSATUR {
 		vertices = initVertices;
 		edges = initEdges;
 		ub = 0;
+		
+		double tempUB = quadraticEqSolver(edges);
 		lb = 1;
 		adjacencyMatrix = new int[vertices][vertices];
 		removed = new boolean[vertices];
 		adjacency();
-	    DSATURmain();			
+		
+		/*if (excludePlanarity()) {
+			DSATURmain();
+		}
+		else {
+			if (checkPlanarity())
+				printUB(4);
+			else
+				DSATURmain();
+		}*/
+	}
+	
+
+	
+	public boolean isInClique(int i, int k, ArrayList<Integer> cliqueSet) {
+		int[] row = new int[vertices];
+		for (int m = 0; m < cliqueSet.size(); m++) {
+			row[cliqueSet.get(m)] = 1;
+		}
+		
+		for (int p = 0; k < vertices; k++) {
+			if (row[p] == 1 && adjacencyMatrix[k][p] == 0) {
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	public double quadraticEqSolver(int edges) {
+		double resultOne;
+		double resultTwo;
+		
+		resultOne = (0.5) + Math.sqrt(0.25+(2*edges));
+		resultTwo = (0.5) - Math.sqrt(0.25+(2*edges));
+		
+		return Math.floor(Math.max(resultOne, resultTwo));
 	}
 	
 	//creates the adjacency matrix
@@ -69,7 +106,7 @@ public class DSATUR {
 		for (int m = 0; m < vertices; m++) {
 			vertex = choseVertex();
 			
-			System.out.println(vertices-m);
+			//System.out.println(vertices-m);
 			
 			for (int j = 0; j < vertices; j++)
 				usedColors[forbiddenColors[vertex][j]] = true; //sets the colors of the adjacent nodes as used
@@ -95,8 +132,10 @@ public class DSATUR {
 		}
 		
 		//final evaluation which colors have been used
-		for (int i = 0; i < assignedColors.length; i ++)
+		for (int i = 0; i < assignedColors.length; i ++) {
 			usedColors[assignedColors[i]] = true;
+			System.out.print(assignedColors[i] +" ");
+		}
 		
 		//looks for the first unused color, the index-1 of that color is the upper bound
 		for (int i = 1; i < usedColors.length; i++)
@@ -106,6 +145,7 @@ public class DSATUR {
 		
 		System.out.println("NEW BEST UPPER BOUND: " +ub);
 		System.out.println("NEW BEST LOWER BOUND: " +lb);
+		
 	}
 	
 	public int choseVertex() {	
@@ -142,13 +182,13 @@ public class DSATUR {
 			//sorts the sub array according to degrees of connectivity
 			sort(2, subArray);
 			
-			/*index = 0;
+			index = 0;
 			while (removed[subArray[index][0]]) {
 				index++;
-			}*/
+			}
 			
 			//returns the vertex with the highest degree of connectivity
-			return subArray[0][0];
+			return subArray[index][0];
 			
 		} else {
 			//if the vertex with the highest degree of saturation is the only vertex with that DSat, that vertex
@@ -174,7 +214,7 @@ public class DSATUR {
 		for (int i = 0; i < vertices; i++) {
 			DSAT[i][0] = i;
 			for (int j = 0; j < vertices; j++) {
-				if (adjacencyMatrix[i][j] == 1)
+				if (adjacencySimple[i][j] == 1)
 					DSAT[i][2]++;
 			}
 		}
@@ -212,4 +252,16 @@ public class DSATUR {
 		}
 		return true;
 	}
+	
+	public boolean excludePlanarity() {
+		return (edges > 3*vertices-6) ? true : false;
+	}
+	
+	/*public boolean checkPlanarity() {
+		
+	}
+	
+	public void printBounds(int ub) {
+		System.out.println(x);
+	}*/
 }

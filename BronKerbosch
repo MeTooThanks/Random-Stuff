@@ -1,0 +1,44 @@
+public void bronKerbosch(List<Integer> P, List<Integer> R, List<Integer> X) throws Exception{
+		if (P.size() == 0 && X.size() == 0) {
+			lb = R.size();
+			throw new Exception();
+		}
+		
+		while (P.size() > 0) {
+			bronKerbosch(pIntersectionNeighborsV(P, P.get(0)), rUnionV(R, P.get(0)), xIntersectionNeighborsV(X, P.get(0)));
+			
+			X.add(P.get(0));
+			P.remove(0);
+		}	
+	}
+	
+	public List<Integer> pIntersectionNeighborsV(List<Integer> P, int v) {
+		List<Integer> newP = new ArrayList<Integer>();
+		
+		for (int i = 0; i < vertices; i++) {
+			if(adjacencyMatrix[v][i] == 1 && P.contains(i)) {
+				newP.add(i);
+			}
+		}
+		
+		return newP;
+	}
+	
+	public List<Integer> rUnionV(List<Integer> R, int v) {
+		List<Integer> newR = R;
+		newR.add(v);
+	
+		return newR;
+	}
+	
+	public List<Integer> xIntersectionNeighborsV(List<Integer> X, int v) {
+		List<Integer> newX = new ArrayList<Integer>();
+		
+		for (int i = 0; i < vertices; i++) {
+			if(adjacencyMatrix[v][i] == 1 && X.contains(i)) {
+				newX.add(i);
+			}
+		}
+		
+		return newX;
+	}
